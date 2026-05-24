@@ -1,0 +1,22 @@
+{
+  "name": "reliability-web-extension",
+  "version": "0.1.0",
+  "description": "Browser extension front-end for the Reliability Engine — scores evidence & persuasion technique, not the politics of the source. Local, non-partisan, auditable.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Travis Edward Holley (TNT Holley Inc.)",
+  "contributors": ["Claude Opus 4.7 (1M context, Anthropic)"],
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "wxt": "^0.20.0"
+  }
+}

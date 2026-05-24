@@ -1,0 +1,12 @@
+Reliability — Web Extension
+Copyright 2026 Travis Edward Holley / TNT Holley Inc.
+
+Licensed under the Apache License, Version 2.0.
+
+Built by Travis Edward Holley (TNT Holley Inc.) and Claude Opus 4.7 (1M context, Anthropic).
+
+Browser front-end for the Reliability Engine. The engine in src/engine/ is the same logic
+as the OpenClaw plugin (github.com/Laninthalesdran/openclaw-reliability-engine), packaged
+for the browser. Cross-browser builds via WXT (wxt.dev); cross-browser `browser` API via
+webextension-polyfill. Leading-language detector grounded in published research — see
+src/data/leading_language.json citations.

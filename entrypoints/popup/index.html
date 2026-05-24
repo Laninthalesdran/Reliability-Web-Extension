@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reliability</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { width: 360px; margin: 0; font: 13px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; }
+      header { padding: 12px 14px; background: #11243a; color: #fff; }
+      header h1 { font-size: 14px; margin: 0; }
+      header p { margin: 2px 0 0; font-size: 11px; opacity: .8; }
+      main { padding: 12px 14px; }
+      .card { border: 1px solid #d9dee5; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+      .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 6px; color: #6b7480; }
+      .flag { padding: 6px 8px; border-radius: 6px; font-size: 12px; margin-top: 4px; }
+      .flag.warn { background: #fff4e5; color: #7a4b00; }
+      .flag.stop { background: #fde8e8; color: #8a1c1c; }
+      .flag.ok   { background: #e8f5ec; color: #1c5a2e; }
+      .flag.info { background: #eef2f7; color: #364152; }
+      .bar { height: 8px; border-radius: 4px; background: #e6e9ee; overflow: hidden; margin: 4px 0; }
+      .bar > span { display: block; height: 100%; background: #c0392b; }
+      .techs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+      .tech { font-size: 11px; background: #eef2f7; color: #364152; border-radius: 10px; padding: 2px 8px; }
+      footer { padding: 8px 14px; font-size: 10px; color: #8a93a0; border-top: 1px solid #eee; }
+      footer a { color: #2f6fb0; }
+      .muted { color: #6b7480; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Reliability</h1>
+      <p>scores evidence &amp; technique, not the politics of the source</p>
+    </header>
+    <main id="out"><p class="muted">Reading this page…</p></main>
+    <footer>
+      Runs locally — nothing leaves your machine.
+      <a href="https://github.com/Laninthalesdran/openclaw-reliability-engine" target="_blank">How it works</a>
+    </footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
