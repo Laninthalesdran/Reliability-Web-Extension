@@ -1,7 +1,28 @@
 import { browser } from "wxt/browser";
+import { Readability } from "@mozilla/readability";
 import { analyzeArticle } from "../../src/analyze";
-import { flagText } from "../../src/engine/stateMedia";
 import { MANIP_HI, VERIF_LO, type Verdict } from "../../src/verdict";
+
+// Extract ONLY the article body — ads, nav, sidebars, newsletter prompts stripped — so the
+// score reflects the journalism, not whatever ad happened to load. Readability first
+// (Firefox Reader View's engine), with a boilerplate-stripping fallback.
+function extractText(html: string): string {
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    try {
+      const art = new Readability(doc.cloneNode(true) as Document).parse();
+      if (art?.textContent && art.textContent.trim().length > 200) return art.textContent.trim();
+    } catch { /* fall through to heuristic */ }
+    const main = doc.querySelector("article") || doc.querySelector("main") || doc.body;
+    main?.querySelectorAll(
+      "script,style,nav,aside,footer,header,form,iframe,noscript,figure," +
+      "[class*='ad-' i],[class*='advert' i],[id*='advert' i],[aria-label*='advert' i],[class*='newsletter' i],[class*='promo' i]"
+    ).forEach((e) => e.remove());
+    return ((main as HTMLElement)?.textContent || "").replace(/\s+/g, " ").trim().slice(0, 20000);
+  } catch {
+    return "";
+  }
+}
 
 const out = document.getElementById("out")!;
 const esc = (s: string) => (s || "").replace(/[&<>"]/g, (c) =>
@@ -11,31 +32,6 @@ function verdictBanner(v: Verdict): string {
   return `<div class="verdict ${v.light}"><div class="dot"></div>` +
     `<div class="txt"><div class="label">${esc(v.label)}</div>` +
     `<div class="reason">${esc(v.reason)}</div></div></div>`;
-}
-
-function sourceCard(host: string, src: any): string {
-  const lines: string[] = [`<div class="card"><h2>Source — ${esc(host) || "this page"}</h2>`];
-  if (src.self_declared_nonfactual) {
-    lines.push(`<div class="flag stop">⛔ Self-declared satire/parody — <b>not a factual source.</b></div>`);
-  }
-  if (src.state_media) {
-    const sm = src.state_media;
-    const cls = sm.control_type === "public-funded-independent" ? "info" : "warn";
-    lines.push(`<div class="flag ${cls}">🏛 ${esc(flagText(sm))}</div>`);
-  }
-  if (src.found && src.validity) {
-    const v = Math.round((src.validity.score ?? 0) * 100);
-    const bias = src.bias || {};
-    lines.push(`<div class="muted">Validity (accuracy from track record): <b>${v}%</b>` +
-      (src.validity.n_resolved ? ` · ${src.validity.n_resolved} resolved claims` : ` · no track record yet`) + `</div>`);
-    if (bias.magnitude) {
-      lines.push(`<div class="muted">Bias (measured technique/selection, not a lean): ` +
-        `magnitude <b>${bias.magnitude}</b>${bias.direction && bias.direction !== "unknown" ? ` · ${esc(bias.direction)}` : ""}</div>`);
-    }
-  } else if (!src.state_media && !src.self_declared_nonfactual) {
-    lines.push(`<div class="flag info">No reputation assigned — by design. We don't hand out source scores; validity is earned from track record. The light above reads this page on its evidence.</div>`);
-  }
-  return lines.join("") + `</div>`;
 }
 
 function languageCard(lang: any, words: number): string {
@@ -81,17 +77,14 @@ async function run() {
     }
     const [inj] = await browser.scripting.executeScript({
       target: { tabId: tab.id },
-      func: () => {
-        const el = document.querySelector("article") || document.querySelector("main") || document.body;
-        return { url: location.href, text: ((el as HTMLElement)?.innerText || "").slice(0, 20000) };
-      },
+      func: () => ({ url: location.href, html: document.documentElement.outerHTML }),
     });
-    const { url, text } = (inj?.result as { url: string; text: string }) || { url: tab.url!, text: "" };
+    const { url, html } = (inj?.result as { url: string; html: string }) || { url: tab.url!, html: "" };
+    const text = extractText(html);
     const a = analyzeArticle(url, text);
     out.innerHTML = verdictBanner(a.verdict)
       + languageCard(a.language, a.words)
-      + sourcingCard(a.sourcing, !!a.source.self_declared_nonfactual)
-      + sourceCard(a.host, a.source);
+      + sourcingCard(a.sourcing, !!a.source.self_declared_nonfactual);
   } catch (e) {
     out.innerHTML = `<div class="flag info">Couldn't read this page (some browser/system pages are protected).</div>`;
   }
