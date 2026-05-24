@@ -5,8 +5,12 @@
 Scores **how much to trust what you're reading** — by **evidence and persuasion technique, not the politics of the source.** It runs **entirely on your machine**: the reliability analysis never leaves your browser, no account, no backend.
 
 Click the toolbar icon on any article and you get:
+- **A stoplight verdict** — 🟢 **green** = low persuasion technique, roughly safe · 🟡 **yellow** = manipulative *but* the claims cite checkable sources · 🔴 **red** = manipulative *and* incapable of being verified (the trap). It combines the two signals below into one glance.
 - **Source profile** — is this outlet **self-declared satire**? **state-funded/controlled** (with the controlling entity and an honest, control-type-scaled framing — a direct state instrument is *not* lumped with a publicly-funded independent broadcaster)? what's its measured bias and validity?
-- **Leading-language scan** — a 0–100% reading of the **persuasion technique** in the article text (loaded language, fear appeals, weasel attribution, us-vs-them, absolutes, clickbait…), with the techniques named. **Detected by technique, applied symmetrically — never a political-lean verdict.**
+- **Leading-language scan** — a 0–100% reading of the **persuasion technique** in the article text (loaded language, fear appeals, weasel attribution, us-vs-them, absolutes, clickbait…). **Detected by technique, applied symmetrically — never a political-lean verdict.** (Technique chips only appear above a meaningful density — a few charged words in a war story are the *subject*, not a fear appeal.)
+
+## Honest limits
+The **verifiability** signal is a heuristic (attribution/evidence density + source flags), not real fact-checking. The **leading-language** detector counts marker words and cannot fully tell a *fear appeal* from a story that's simply *about* something frightening (it density-normalizes and gates the display to reduce false positives, but the deeper subject-vs-technique distinction is hard NLP). Treat the light as a **prompt to think, not a verdict to obey** — green is "roughly safe," not "true"; red is "be careful," not "false." Full engine limitations: [`KNOWN_LIMITATIONS`](https://github.com/Laninthalesdran/openclaw-reliability-engine/blob/main/KNOWN_LIMITATIONS.md).
 
 It's a **confidence-weighting aid, not a gatekeeper.** A low score means "corroborate before you rely on this," never "this is forbidden." Read [`KNOWN_LIMITATIONS`](https://github.com/Laninthalesdran/openclaw-reliability-engine/blob/main/KNOWN_LIMITATIONS.md) in the engine repo — including the one true gap (omission).
 

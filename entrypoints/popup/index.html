@@ -25,6 +25,14 @@
       footer { padding: 8px 14px; font-size: 10px; color: #8a93a0; border-top: 1px solid #eee; }
       footer a { color: #2f6fb0; }
       .muted { color: #6b7480; }
+      .verdict { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 8px; margin-bottom: 12px; }
+      .verdict .dot { width: 22px; height: 22px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+      .verdict .txt { min-width: 0; }
+      .verdict .label { font-weight: 700; font-size: 13px; }
+      .verdict .reason { font-size: 11px; color: #3a4250; margin-top: 1px; }
+      .verdict.green { background: #e8f5ec; } .verdict.green .dot { background: #1c9d4b; }
+      .verdict.yellow { background: #fff4e5; } .verdict.yellow .dot { background: #e2960f; }
+      .verdict.red { background: #fde8e8; } .verdict.red .dot { background: #c0392b; }
     </style>
   </head>
   <body>
