@@ -5,7 +5,7 @@
 
 import { ReliabilityEngine } from "./engine/engine";
 import { sourceIdForHost, normalizeHost } from "./domains";
-import { verifiability, verdict, type Verdict } from "./verdict";
+import { verifiability, verdict, type Verdict, type Sourcing } from "./verdict";
 
 const engine = new ReliabilityEngine();
 
@@ -14,7 +14,7 @@ export interface ArticleAnalysis {
   source: any;
   language: ReturnType<ReliabilityEngine["scanLanguage"]>;
   words: number;
-  verifiability: number;
+  sourcing: Sourcing;
   verdict: Verdict;
 }
 
@@ -27,8 +27,8 @@ export function analyzeArticle(url: string, text: string): ArticleAnalysis {
     : { found: false, source_id: host, note: "source not in registries — no profile; judge on the evidence" };
   const language = engine.scanLanguage(text || "");
   const words = (text || "").split(/\s+/).filter(Boolean).length;
-  const verif = verifiability(text || "", source);
-  return { host, source, language, words, verifiability: verif, verdict: verdict(language.score ?? 0, verif, source) };
+  const sourcing = verifiability(text || "", source);
+  return { host, source, language, words, sourcing, verdict: verdict(language.score ?? 0, sourcing.score, source) };
 }
 
 export { engine };

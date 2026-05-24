@@ -19,8 +19,10 @@ const ATTRIBUTION = [
 const MANIP_HI = 0.25;   // threshold for "manipulative"
 const VERIF_LO = 0.35;   // threshold for "incapable of being verified"
 
-export function verifiability(text: string, source: any): number {
-  if (source?.self_declared_nonfactual) return 0; // satire: not meant to be true
+export interface Sourcing { score: number; cues: number; capped: boolean; }
+
+export function verifiability(text: string, source: any): Sourcing {
+  if (source?.self_declared_nonfactual) return { score: 0, cues: 0, capped: false };
   const low = " " + (text || "").toLowerCase() + " ";
   const words = Math.max((low.match(/[a-z']+/g) || []).length, 1);
   let hits = 0;
@@ -32,8 +34,9 @@ export function verifiability(text: string, source: any): number {
   const per100 = (hits * 100) / Math.max(words, 50);
   let v = 1 - Math.exp(-0.6 * per100);
   // a direct state instrument can't be independently verified at face value — cap it
-  if (source?.state_media?.control_type === "state-instrument") v = Math.min(v, 0.3);
-  return Math.round(v * 1000) / 1000;
+  let capped = false;
+  if (source?.state_media?.control_type === "state-instrument" && v > 0.3) { v = 0.3; capped = true; }
+  return { score: Math.round(v * 1000) / 1000, cues: hits, capped };
 }
 
 export interface Verdict { light: "green" | "yellow" | "red"; label: string; reason: string; }
@@ -59,4 +62,4 @@ export function verdict(manip: number, verif: number, source: any): Verdict {
     reason: "Low persuasion technique and reasonably sourced — still corroborate big claims." };
 }
 
-export { MANIP_HI };
+export { MANIP_HI, VERIF_LO };

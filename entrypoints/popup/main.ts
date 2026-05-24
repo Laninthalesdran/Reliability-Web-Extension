@@ -1,7 +1,7 @@
 import { browser } from "wxt/browser";
 import { analyzeArticle } from "../../src/analyze";
 import { flagText } from "../../src/engine/stateMedia";
-import { MANIP_HI, type Verdict } from "../../src/verdict";
+import { MANIP_HI, VERIF_LO, type Verdict } from "../../src/verdict";
 
 const out = document.getElementById("out")!;
 const esc = (s: string) => (s || "").replace(/[&<>"]/g, (c) =>
@@ -56,6 +56,22 @@ function languageCard(lang: any, words: number): string {
     `</div>`;
 }
 
+function sourcingCard(sourcing: any, satire: boolean): string {
+  if (satire) {
+    return `<div class="card"><h2>Sourcing / verifiability</h2>` +
+      `<div class="flag stop">Not applicable — self-declared satire isn't meant to be verified as fact.</div></div>`;
+  }
+  const pct = Math.round((sourcing.score ?? 0) * 100);
+  const level = pct >= 65 ? "ok" : pct >= VERIF_LO * 100 ? "warn" : "stop";
+  const label = pct >= 65 ? "well-sourced — cites checkable sources"
+    : pct >= VERIF_LO * 100 ? "moderately sourced" : "thinly sourced — few verifiable sources";
+  const color = pct >= 65 ? "#1c9d4b" : pct >= VERIF_LO * 100 ? "#e2960f" : "#c0392b";
+  const cap = sourcing.capped ? " (capped — a state instrument can't be independently verified at face value)" : "";
+  return `<div class="card"><h2>Sourcing / verifiability</h2>` +
+    `<div class="bar"><span style="width:${pct}%;background:${color}"></span></div>` +
+    `<div class="flag ${level}">Verifiability ${pct}% — ${label}${cap}. Found ${sourcing.cues} attribution/quote cue(s) — can you check the claims?</div></div>`;
+}
+
 async function run() {
   try {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -72,7 +88,10 @@ async function run() {
     });
     const { url, text } = (inj?.result as { url: string; text: string }) || { url: tab.url!, text: "" };
     const a = analyzeArticle(url, text);
-    out.innerHTML = verdictBanner(a.verdict) + sourceCard(a.host, a.source) + languageCard(a.language, a.words);
+    out.innerHTML = verdictBanner(a.verdict)
+      + languageCard(a.language, a.words)
+      + sourcingCard(a.sourcing, !!a.source.self_declared_nonfactual)
+      + sourceCard(a.host, a.source);
   } catch (e) {
     out.innerHTML = `<div class="flag info">Couldn't read this page (some browser/system pages are protected).</div>`;
   }
