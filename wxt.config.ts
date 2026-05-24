@@ -7,9 +7,10 @@ import { defineConfig } from "wxt";
 export default defineConfig({
   manifest: {
     name: "Reliability — evidence & technique, not politics",
+    // Chrome caps manifest description at 132 chars; the full pitch lives in the store listing.
     description:
-      "Scores how much to trust what you're reading by evidence and persuasion technique, " +
-      "not the politics of the source. Runs locally; nothing leaves your machine.",
+      "Scores what to trust as you read — by evidence & technique, not source politics. Runs locally; nothing leaves your machine.",
+    homepage_url: "https://github.com/Laninthalesdran/Reliability-Web-Extension",
     permissions: ["activeTab", "scripting"],
     action: { default_title: "Reliability" },
     browser_specific_settings: {

@@ -10,3 +10,7 @@ as the OpenClaw plugin (github.com/Laninthalesdran/openclaw-reliability-engine),
 for the browser. Cross-browser builds via WXT (wxt.dev); cross-browser `browser` API via
 webextension-polyfill. Leading-language detector grounded in published research — see
 src/data/leading_language.json citations.
+
+Third-party components:
+- @mozilla/readability (Apache-2.0) — article-body extraction.
+- WXT (wxt.dev) and webextension-polyfill — cross-browser build tooling + API.
